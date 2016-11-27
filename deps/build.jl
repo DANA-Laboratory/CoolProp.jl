@@ -1,5 +1,5 @@
 import JSON
-const OS_ARCH_CoolProp = (Sys.WORD_SIZE == 64) ? "64bit" : "32bit__cdecl";
+const OS_ARCH_CoolProp = (Sys.WORD_SIZE == 64) ? "64bit" : (is_windows() ? "32bit__cdecl" : "32bit");
 const destpathbase = abspath(joinpath(@__FILE__,".."));
 latestVersion_CoolProp = "";
 _download(s, d) = isfile(d) ? throw("file exists ...") : begin
@@ -20,11 +20,11 @@ try
     _download(joinpath(urlbase,"exports.txt"), joinpath(destpathbase,"exports.txt"));
   end
   @static if is_linux()
-    urlbase = coolpropurlbase * "shared_library/Linux/64bit/libCoolProp.so.$latestVersion_CoolProp";
+    urlbase = coolpropurlbase * "shared_library/Linux/$OS_ARCH_CoolProp/libCoolProp.so.$latestVersion_CoolProp";
     _download(urlbase, joinpath(destpathbase,"CoolProp.so"));
   end
   @static if is_apple()
-    urlbase = coolpropurlbase * "shared_library/Darwin/64bit/libCoolProp.dylib";
+    urlbase = coolpropurlbase * "shared_library/Darwin/$OS_ARCH_CoolProp/libCoolProp.dylib";
     _download(urlbase, joinpath(destpathbase,"CoolProp.dylib"));
   end
 catch err
